@@ -78,6 +78,17 @@ class CustomizationUsingTableViewDelegate : UIViewController {
 }
 
 extension CustomizationUsingTableViewDelegate : UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView(frame: .zero)
+        view.backgroundColor = UIColor.red
+
+        return view
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30.0
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         // you can also fetch item
