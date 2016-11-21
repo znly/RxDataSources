@@ -22,7 +22,8 @@ open class RxCollectionViewSectionedAnimatedDataSource<S: AnimatableSectionModel
     , RxCollectionViewDataSourceType {
     public typealias Element = [S]
     public var animationConfiguration = AnimationConfiguration()
-    
+    public var completionUpdatedCell: ((Bool) -> Void)?
+
     // For some inexplicable reason, when doing animated updates first time
     // it crashes. Still need to figure out that one.
     var dataSet = false
@@ -49,6 +50,11 @@ open class RxCollectionViewSectionedAnimatedDataSource<S: AnimatableSectionModel
             .addDisposableTo(disposeBag)
     }
 
+    public convenience init(completionUpdateCell: @escaping ((Bool) -> Void)) {
+        self.init()
+        completionUpdatedCell = completionUpdateCell
+    }
+
     /**
      This method exists because collection view updates are throttled because of internal collection view bugs.
      Collection view behaves poorly during fast updates, so this should remedy those issues.
@@ -62,7 +68,12 @@ open class RxCollectionViewSectionedAnimatedDataSource<S: AnimatableSectionModel
                 for difference in differences {
                     dataSource.setSections(difference.finalSections)
 
-                    collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration)
+                    if let completionBlock = self.completionUpdatedCell {
+                        collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration, completionBlock: completionBlock)
+                    }
+                    else {
+                        collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration)
+                    }
                 }
             }
             catch let e {
