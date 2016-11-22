@@ -23,7 +23,7 @@ open class RxCollectionViewSectionedAnimatedDataSource<S: AnimatableSectionModel
     public typealias Element = [S]
     public var animationConfiguration = AnimationConfiguration()
     public var completionUpdatedCell: ((Bool) -> Void)?
-
+    public var performActionDuringBathUpdate: (() -> ())?
     // For some inexplicable reason, when doing animated updates first time
     // it crashes. Still need to figure out that one.
     var dataSet = false
@@ -69,7 +69,7 @@ open class RxCollectionViewSectionedAnimatedDataSource<S: AnimatableSectionModel
                     dataSource.setSections(difference.finalSections)
 
                     if let completionBlock = self.completionUpdatedCell {
-                        collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration, completionBlock: completionBlock)
+                        collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration, performActionDuringBatchUpdate: self.performActionDuringBathUpdate, completionBlock: completionBlock)
                     }
                     else {
                         collectionView.performBatchUpdates(difference, animationConfiguration: self.animationConfiguration)

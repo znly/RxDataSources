@@ -98,9 +98,12 @@ extension UICollectionView : SectionedViewType {
         })
     }
 
-    public func performBatchUpdates<S: SectionModelType>(_ changes: Changeset<S>, animationConfiguration: AnimationConfiguration, completionBlock: @escaping (Bool) -> Void) {
+    public func performBatchUpdates<S: SectionModelType>(_ changes: Changeset<S>, animationConfiguration: AnimationConfiguration, performActionDuringBatchUpdate: (()->())?, completionBlock: @escaping (Bool) -> Void) {
         self.performBatchUpdates({ () -> Void in
             _performBatchUpdates(self, changes: changes, animationConfiguration: animationConfiguration)
+            if let performAction = performActionDuringBatchUpdate {
+                performAction()
+            }
         }, completion: completionBlock)
     }
 }
